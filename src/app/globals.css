@@ -47,13 +47,25 @@ body {
   color: #94a3b8;
 }
 
-/* Resume print */
+/* Resume print & multi-page */
+.resume-page {
+  box-sizing: border-box;
+}
+
 @media print {
   .no-print {
     display: none !important;
   }
   .resume-preview-root {
     transform: none !important;
+  }
+  .resume-page {
+    page-break-after: always;
+    break-after: page;
+    box-shadow: none !important;
+  }
+  .resume-page:last-child {
+    page-break-after: auto;
   }
 }
 

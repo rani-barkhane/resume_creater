@@ -1,6 +1,7 @@
 "use client";
 
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { useState } from "react";
+import { ZoomIn, ZoomOut, Maximize2, Files } from "lucide-react";
 import { TemplateRenderer } from "@/templates/TemplateRenderer";
 import { useResumeStore } from "@/store/resume-store";
 import { Button } from "@/components/ui/Button";
@@ -22,6 +23,7 @@ export function ResumePreview({
   const theme = useResumeStore((s) => s.theme);
   const previewZoom = useResumeStore((s) => s.previewZoom);
   const setPreviewZoom = useResumeStore((s) => s.setPreviewZoom);
+  const [pageCount, setPageCount] = useState(1);
 
   return (
     <div
@@ -33,8 +35,15 @@ export function ResumePreview({
     >
       {showZoom && (
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur shrink-0">
-          <span className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
-            <Maximize2 className="w-3.5 h-3.5" /> Live Preview · A4
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Maximize2 className="w-3.5 h-3.5" />
+            Live Preview · A4
+            {pageCount > 1 && (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300">
+                <Files className="w-3 h-3" />
+                {pageCount} pages
+              </span>
+            )}
           </span>
           <div className="flex items-center gap-1">
             <Button
@@ -45,7 +54,7 @@ export function ResumePreview({
             >
               <ZoomOut className="w-4 h-4" />
             </Button>
-            <span className="text-xs text-slate-500 w-10 text-center tabular-nums">
+            <span className="text-xs text-slate-500 dark:text-slate-400 w-10 text-center tabular-nums">
               {previewZoom}%
             </span>
             <Button
@@ -67,6 +76,7 @@ export function ResumePreview({
             resumeData={data}
             theme={theme}
             scale={previewZoom}
+            onPageCountChange={setPageCount}
           />
         </div>
       </div>

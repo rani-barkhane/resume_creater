@@ -58,6 +58,7 @@ export function TemplateThumbnailPreview({
           resumeData={previewData}
           theme={theme}
           scale={100}
+          singlePage
         />
       </div>
     </div>

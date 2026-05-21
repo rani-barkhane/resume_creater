@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import { ResumeModel } from "@/models/Resume";
 import { getAuthFromRequest } from "@/lib/auth";
 import { generatePdfFromHtml, pdfResponse } from "@/lib/pdf";
-import { renderResumeHtml } from "@/lib/render-resume-html";
+import { renderPaginatedResumeHtml } from "@/lib/render-paginated-html";
 import { jsonError } from "@/lib/api-utils";
 import type { NextRequest } from "next/server";
 
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
   if (!data) return jsonError("Resume data required");
 
-  const html = renderResumeHtml({ templateId, data, theme });
+  const html = renderPaginatedResumeHtml({ templateId, data, theme });
   const name =
     filename ||
     `${data.personal?.fullName || "resume"}`.replace(/\s+/g, "-") + ".pdf";
