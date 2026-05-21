@@ -8,9 +8,12 @@ import { FileText } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
+import { AuthThemeBar } from "@/components/layout/AuthThemeBar";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { refreshSession } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -33,6 +36,7 @@ export default function SignupPage() {
         return;
       }
       toast.success("Account created!");
+      await refreshSession();
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -43,7 +47,9 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="min-h-screen pt-16 flex items-center justify-center px-4">
+    <>
+      <AuthThemeBar />
+      <main className="min-h-screen pt-16 flex items-center justify-center px-4 bg-slate-50 dark:bg-slate-950">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -56,8 +62,10 @@ export default function SignupPage() {
             </span>
             ResumeForge
           </Link>
-          <h1 className="mt-6 text-2xl font-bold">Create your account</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="mt-6 text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Create your account
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
             Already have an account?{" "}
             <Link href="/login" className="text-indigo-600 hover:underline">
               Log in
@@ -96,5 +104,6 @@ export default function SignupPage() {
         </form>
       </motion.div>
     </main>
+    </>
   );
 }

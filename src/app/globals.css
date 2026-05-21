@@ -53,19 +53,43 @@ body {
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
   .no-print {
     display: none !important;
   }
-  .resume-preview-root {
+  body {
+    background: white !important;
+  }
+  .resume-print-root {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  .resume-print-root .resume-preview-root {
     transform: none !important;
   }
   .resume-page {
     page-break-after: always;
     break-after: page;
     box-shadow: none !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 auto;
   }
   .resume-page:last-child {
     page-break-after: auto;
+  }
+  .resume-page > div {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
   }
 }
 

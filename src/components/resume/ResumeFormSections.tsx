@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { nanoid } from "nanoid";
 import { useResumeStore } from "@/store/resume-store";
 import { Input } from "@/components/ui/Input";
@@ -7,12 +8,65 @@ import { Button } from "@/components/ui/Button";
 import { Plus, Trash2, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { FORM_STEPS } from "@/constants/templates";
+import {
+  createDefaultLanguages,
+  DEFAULT_LANGUAGE_COUNT,
+} from "@/constants/default-languages";
+import { BulletListEditor } from "@/components/ui/BulletListEditor";
+import {
+  bulletsToDescription,
+  getExperienceBullets,
+  getFormExperienceBullets,
+  getFormProjectBullets,
+  getBulletsFromText,
+} from "@/lib/bullet-utils";
+import { SKILLS_DISPLAY_OPTIONS } from "@/constants/skills-display";
+import type { SkillsDisplayMode } from "@/types/resume";
+
+const WORK_ARRANGEMENTS = [
+  { value: "", label: "Select work arrangement" },
+  { value: "Remote", label: "Remote" },
+  { value: "On-site", label: "On-site / Office" },
+  { value: "Hybrid", label: "Hybrid" },
+  { value: "Other", label: "Other (custom)" },
+] as const;
+
+function parseWorkLocation(location: string): {
+  mode: string;
+  city: string;
+} {
+  const trimmed = location?.trim() || "";
+  for (const m of ["Remote", "On-site", "Hybrid"] as const) {
+    if (trimmed === m) return { mode: m, city: "" };
+    if (trimmed.startsWith(`${m} · `)) {
+      return { mode: m, city: trimmed.slice(m.length + 3) };
+    }
+  }
+  if (!trimmed) return { mode: "", city: "" };
+  return { mode: "Other", city: trimmed };
+}
+
+function formatWorkLocation(mode: string, city: string): string {
+  if (!mode) return "";
+  if (mode === "Other") return city.trim();
+  if (city.trim()) return `${mode} · ${city.trim()}`;
+  return mode;
+}
+
+const selectClassName =
+  "w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500";
 
 export function ResumeFormSections() {
   const currentStep = useResumeStore((s) => s.currentStep);
   const data = useResumeStore((s) => s.data);
   const setData = useResumeStore((s) => s.setData);
   const step = FORM_STEPS[currentStep];
+
+  useEffect(() => {
+    if (step?.id === "languages" && data.languages.length === 0) {
+      setData({ languages: createDefaultLanguages() });
+    }
+  }, [step?.id, data.languages.length, setData]);
 
   const aiRewrite = async (text: string, index: number) => {
     const res = await fetch("/api/ai/rewrite", {
@@ -23,7 +77,12 @@ export function ResumeFormSections() {
     const json = await res.json();
     if (json.success) {
       const exp = [...data.experience];
-      exp[index] = { ...exp[index], description: json.data.rewritten };
+      const bullets = getBulletsFromText(json.data.rewritten);
+      exp[index] = {
+        ...exp[index],
+        bullets,
+        description: bulletsToDescription(bullets),
+      };
       setData({ experience: exp });
       toast.success("AI enhanced!");
     }
@@ -177,6 +236,117 @@ export function ResumeFormSections() {
                   setData({ experience });
                 }}
               />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Start date"
+                  placeholder="e.g. Jan 2022"
+                  value={exp.startDate}
+                  onChange={(e) => {
+                    const experience = [...data.experience];
+                    experience[i] = { ...exp, startDate: e.target.value };
+                    setData({ experience });
+                  }}
+                />
+                <Input
+                  label="End date"
+                  placeholder="e.g. Dec 2024 or Present"
+                  value={exp.current ? "Present" : exp.endDate}
+                  disabled={exp.current}
+                  onChange={(e) => {
+                    const experience = [...data.experience];
+                    experience[i] = {
+                      ...exp,
+                      endDate: e.target.value,
+                      current: false,
+                    };
+                    setData({ experience });
+                  }}
+                />
+              </div>
+              <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={exp.current}
+                  onChange={(e) => {
+                    const experience = [...data.experience];
+                    experience[i] = {
+                      ...exp,
+                      current: e.target.checked,
+                      endDate: e.target.checked ? "Present" : exp.endDate,
+                    };
+                    setData({ experience });
+                  }}
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                I currently work here
+              </label>
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
+                  Work arrangement
+                </label>
+                <select
+                  value={parseWorkLocation(exp.location).mode}
+                  onChange={(e) => {
+                    const { city } = parseWorkLocation(exp.location);
+                    const experience = [...data.experience];
+                    experience[i] = {
+                      ...exp,
+                      location: formatWorkLocation(e.target.value, city),
+                    };
+                    setData({ experience });
+                  }}
+                  className={selectClassName}
+                >
+                  {WORK_ARRANGEMENTS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {(() => {
+                const { mode, city } = parseWorkLocation(exp.location);
+                if (mode === "Remote") return null;
+                if (mode === "Other") {
+                  return (
+                    <Input
+                      label="Location details"
+                      placeholder="e.g. Pune, India"
+                      value={city}
+                      onChange={(e) => {
+                        const experience = [...data.experience];
+                        experience[i] = {
+                          ...exp,
+                          location: formatWorkLocation("Other", e.target.value),
+                        };
+                        setData({ experience });
+                      }}
+                    />
+                  );
+                }
+                if (mode === "On-site" || mode === "Hybrid") {
+                  return (
+                    <Input
+                      label={
+                        mode === "Hybrid"
+                          ? "Office / city (optional)"
+                          : "Office location (optional)"
+                      }
+                      placeholder="e.g. Pune, India"
+                      value={city}
+                      onChange={(e) => {
+                        const experience = [...data.experience];
+                        experience[i] = {
+                          ...exp,
+                          location: formatWorkLocation(mode, e.target.value),
+                        };
+                        setData({ experience });
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })()}
               <Input
                 label="Tech Stack (optional)"
                 placeholder="React, Node.js, MongoDB..."
@@ -187,24 +357,29 @@ export function ResumeFormSections() {
                   setData({ experience });
                 }}
               />
-              <textarea
-                value={exp.description}
-                onChange={(e) => {
+              <BulletListEditor
+                label="Achievements & responsibilities"
+                bullets={getFormExperienceBullets(exp)}
+                onChange={(bullets) => {
                   const experience = [...data.experience];
                   experience[i] = {
                     ...exp,
-                    description: e.target.value.slice(0, 800),
+                    bullets,
+                    description: bulletsToDescription(bullets),
                   };
                   setData({ experience });
                 }}
-                rows={4}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                placeholder="Describe your achievements..."
+                placeholder="e.g. Built REST APIs serving 10k+ daily users"
               />
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => aiRewrite(exp.description, i)}
+                onClick={() =>
+                  aiRewrite(
+                    bulletsToDescription(getExperienceBullets(exp)),
+                    i
+                  )
+                }
               >
                 <Wand2 className="w-3 h-3" /> AI Rewrite
               </Button>
@@ -225,6 +400,7 @@ export function ResumeFormSections() {
                     endDate: "",
                     current: false,
                     description: "",
+                    bullets: [],
                   },
                 ],
               })
@@ -309,6 +485,40 @@ export function ResumeFormSections() {
     case "skills":
       return (
         <div className="space-y-4">
+          <div>
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Skills layout
+            </p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {SKILLS_DISPLAY_OPTIONS.map((opt) => {
+                const active =
+                  (data.skillsDisplay ?? "bullets") === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() =>
+                      setData({
+                        skillsDisplay: opt.value as SkillsDisplayMode,
+                      })
+                    }
+                    className={`rounded-lg border px-3 py-2 text-left text-xs transition ${
+                      active
+                        ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 ring-1 ring-indigo-500"
+                        : "border-slate-200 dark:border-slate-700 hover:border-indigo-300"
+                    }`}
+                  >
+                    <span className="block font-semibold text-slate-800 dark:text-slate-200">
+                      {opt.label}
+                    </span>
+                    <span className="mt-0.5 block text-slate-500 dark:text-slate-400">
+                      {opt.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <Input
             label="Add skill (press Enter)"
             placeholder="e.g. React, TypeScript"
@@ -385,15 +595,19 @@ export function ResumeFormSections() {
                   setData({ projects });
                 }}
               />
-              <textarea
-                value={proj.description}
-                onChange={(e) => {
+              <BulletListEditor
+                label="Project highlights"
+                bullets={getFormProjectBullets(proj)}
+                onChange={(bullets) => {
                   const projects = [...data.projects];
-                  projects[i] = { ...proj, description: e.target.value };
+                  projects[i] = {
+                    ...proj,
+                    bullets,
+                    description: bulletsToDescription(bullets),
+                  };
                   setData({ projects });
                 }}
-                rows={3}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                placeholder="e.g. Implemented auth flow with JWT and role-based access"
               />
               <Input
                 label="Technologies (comma-separated)"
@@ -422,6 +636,7 @@ export function ResumeFormSections() {
                     id: nanoid(),
                     name: "",
                     description: "",
+                    bullets: [],
                     technologies: [],
                   },
                 ],
@@ -464,21 +679,71 @@ export function ResumeFormSections() {
     case "languages":
       return (
         <div className="space-y-4">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            English and Hindi are included by default. Add more languages below
+            and remove any extras you do not need.
+          </p>
           {data.languages.map((lang, i) => (
-            <div key={lang.id} className="grid grid-cols-2 gap-3">
-              <Input label="Language" value={lang.name} onChange={(e) => {
-                const languages = [...data.languages];
-                languages[i] = { ...lang, name: e.target.value };
-                setData({ languages });
-              }} />
-              <Input label="Proficiency" value={lang.proficiency} onChange={(e) => {
-                const languages = [...data.languages];
-                languages[i] = { ...lang, proficiency: e.target.value };
-                setData({ languages });
-              }} />
+            <div
+              key={lang.id}
+              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3"
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                  Language {i + 1}
+                  {i < DEFAULT_LANGUAGE_COUNT && (
+                    <span className="ml-1 text-indigo-500">(default)</span>
+                  )}
+                </span>
+                {i >= DEFAULT_LANGUAGE_COUNT && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setData({
+                        languages: data.languages.filter((l) => l.id !== lang.id),
+                      })
+                    }
+                    className="text-red-500 hover:text-red-600"
+                    aria-label="Remove language"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Language"
+                  value={lang.name}
+                  onChange={(e) => {
+                    const languages = [...data.languages];
+                    languages[i] = { ...lang, name: e.target.value };
+                    setData({ languages });
+                  }}
+                />
+                <Input
+                  label="Proficiency"
+                  placeholder="e.g. Native, Fluent, Professional"
+                  value={lang.proficiency}
+                  onChange={(e) => {
+                    const languages = [...data.languages];
+                    languages[i] = { ...lang, proficiency: e.target.value };
+                    setData({ languages });
+                  }}
+                />
+              </div>
             </div>
           ))}
-          <Button variant="outline" onClick={() => setData({ languages: [...data.languages, { id: nanoid(), name: "", proficiency: "Fluent" }] })}>
+          <Button
+            variant="outline"
+            onClick={() =>
+              setData({
+                languages: [
+                  ...data.languages,
+                  { id: nanoid(), name: "", proficiency: "Fluent" },
+                ],
+              })
+            }
+          >
             <Plus className="w-4 h-4" /> Add Language
           </Button>
         </div>

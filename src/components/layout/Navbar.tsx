@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { FileText, Moon, Sun, Menu, X } from "lucide-react";
-import { useTheme } from "next-themes";
+import { FileText, Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const navLinks = [
   { href: "/#features", label: "Features" },
@@ -17,8 +17,8 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, status, isAuthenticated, logout } = useAuth();
   const isMarketing = !pathname.startsWith("/dashboard");
 
   if (!isMarketing) return null;
@@ -30,7 +30,11 @@ export function Navbar() {
       className="fixed top-0 inset-x-0 z-50 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-bold text-lg"
+          title="Home"
+        >
           <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white">
             <FileText className="w-4 h-4" />
           </span>
@@ -52,21 +56,35 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              Log in
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button size="sm">Get Started</Button>
-          </Link>
+          <ThemeToggle variant="icon" />
+          {status === "loading" ? (
+            <div className="w-24 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse" />
+          ) : isAuthenticated && user ? (
+            <>
+              <span className="text-sm text-slate-600 dark:text-slate-400 max-w-[140px] truncate hidden lg:inline">
+                {user.name}
+              </span>
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm">
+                  <LayoutDashboard className="w-4 h-4" /> Dashboard
+                </Button>
+              </Link>
+              <Button variant="outline" size="sm" onClick={() => logout()}>
+                <LogOut className="w-4 h-4" /> Log out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button size="sm">Get Started</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -90,17 +108,47 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          <div className="flex items-center gap-2 pb-2">
+            <span className="text-xs text-slate-500">Theme</span>
+            <ThemeToggle variant="segmented" />
+          </div>
           <div className="flex gap-2 pt-2">
-            <Link href="/login" className="flex-1">
-              <Button variant="outline" className="w-full" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup" className="flex-1">
-              <Button className="w-full" size="sm">
-                Sign up
-              </Button>
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                <p className="text-sm text-slate-600 dark:text-slate-400 w-full pb-1">
+                  Signed in as <strong>{user.name}</strong>
+                </p>
+                <Link href="/dashboard" className="flex-1">
+                  <Button className="w-full" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  size="sm"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    logout();
+                  }}
+                >
+                  Log out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="flex-1">
+                  <Button variant="outline" className="w-full" size="sm">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/signup" className="flex-1">
+                  <Button className="w-full" size="sm">
+                    Sign up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -8,10 +8,12 @@ import { FileText } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshSession } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
 
@@ -30,6 +32,7 @@ export default function LoginForm() {
         return;
       }
       toast.success("Welcome back!");
+      await refreshSession();
       const redirect = searchParams.get("redirect") || "/dashboard";
       router.push(redirect);
       router.refresh();
@@ -41,7 +44,7 @@ export default function LoginForm() {
   };
 
   return (
-    <main className="min-h-screen pt-16 flex items-center justify-center px-4">
+    <main className="min-h-screen pt-16 flex items-center justify-center px-4 bg-slate-50 dark:bg-slate-950">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -54,8 +57,10 @@ export default function LoginForm() {
             </span>
             ResumeForge
           </Link>
-          <h1 className="mt-6 text-2xl font-bold">Welcome back</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="mt-6 text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Welcome back
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-indigo-600 hover:underline">
               Sign up

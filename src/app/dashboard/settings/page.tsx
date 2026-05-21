@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
-import { Moon, Sun, Upload } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Upload } from "lucide-react";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [user, setUser] = useState<{ name: string; email: string } | null>(
     null
@@ -51,7 +49,9 @@ export default function SettingsPage() {
 
   return (
     <div className="p-6 lg:p-10 max-w-2xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+        Settings
+      </h1>
 
       <Card className="p-6 space-y-4">
         <h2 className="font-semibold">Profile</h2>
@@ -64,23 +64,14 @@ export default function SettingsPage() {
       </Card>
 
       <Card className="p-6 space-y-4">
-        <h2 className="font-semibold">Appearance</h2>
-        <div className="flex gap-2">
-          <Button
-            variant={theme === "light" ? "primary" : "outline"}
-            size="sm"
-            onClick={() => setTheme("light")}
-          >
-            <Sun className="w-4 h-4" /> Light
-          </Button>
-          <Button
-            variant={theme === "dark" ? "primary" : "outline"}
-            size="sm"
-            onClick={() => setTheme("dark")}
-          >
-            <Moon className="w-4 h-4" /> Dark
-          </Button>
-        </div>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+          Appearance
+        </h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Choose light, dark, or match your system settings. Your preference is
+          saved automatically.
+        </p>
+        <ThemeToggle variant="segmented" />
       </Card>
 
       <Card className="p-6 space-y-4">

@@ -24,9 +24,10 @@ export async function POST(req: NextRequest) {
       userId: auth.userId,
     });
     if (!resume) return jsonError("Resume not found", 404);
-    templateId = resume.templateId;
-    data = resume.data;
-    theme = resume.theme;
+    // Prefer live editor state from the client so PDF matches preview
+    templateId = body.templateId ?? resume.templateId;
+    data = body.data ?? resume.data;
+    theme = body.theme ?? resume.theme;
     await ResumeModel.updateOne(
       { _id: resumeId },
       { $inc: { "analytics.downloads": 1 } }
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!data) return jsonError("Resume data required");
+  if (!templateId) templateId = "professional";
 
   const html = renderPaginatedResumeHtml({ templateId, data, theme });
   const name =

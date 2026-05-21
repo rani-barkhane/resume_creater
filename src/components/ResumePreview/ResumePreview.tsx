@@ -28,13 +28,13 @@ export function ResumePreview({
   return (
     <div
       className={cn(
-        "flex flex-col bg-slate-100 dark:bg-slate-900/50 overflow-hidden",
+        "resume-print-root flex flex-col bg-slate-100 dark:bg-slate-900/50 overflow-hidden",
         sticky && "lg:sticky lg:top-0 lg:h-[calc(100vh-3.5rem)]",
         className
       )}
     >
       {showZoom && (
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur shrink-0">
+        <div className="no-print flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur shrink-0">
           <span className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-2">
             <Maximize2 className="w-3.5 h-3.5" />
             Live Preview · A4
@@ -69,8 +69,8 @@ export function ResumePreview({
         </div>
       )}
 
-      <div className="flex-1 overflow-auto p-4 sm:p-8 flex justify-center items-start min-h-0">
-        <div className="shadow-2xl rounded-sm ring-1 ring-slate-200/50 dark:ring-slate-700 transition-transform duration-200">
+      <div className="flex-1 overflow-auto p-4 sm:p-8 flex justify-center items-start min-h-0 print:overflow-visible print:p-0">
+        <div className="shadow-2xl rounded-sm ring-1 ring-slate-200/50 dark:ring-slate-700 transition-transform duration-200 print:shadow-none print:ring-0">
           <TemplateRenderer
             templateId={templateId}
             resumeData={data}

@@ -1,3 +1,5 @@
+import { createDefaultLanguages } from "@/constants/default-languages";
+
 export type TemplateId =
   | "minimal"
   | "developer"
@@ -54,6 +56,8 @@ export interface Project {
   name: string;
   url?: string;
   description: string;
+  /** Structured bullets; falls back to splitting description by newlines */
+  bullets?: string[];
   technologies: string[];
 }
 
@@ -92,12 +96,16 @@ export interface ResumeAnalytics {
   shareClicks: number;
 }
 
+export type SkillsDisplayMode = "inline" | "bullets" | "table" | "cards";
+
 export interface ResumeData {
   personal: PersonalInfo;
   summary: string;
   education: Education[];
   experience: Experience[];
   skills: string[];
+  /** How skills render in preview and PDF */
+  skillsDisplay?: SkillsDisplayMode;
   projects: Project[];
   certifications: Certification[];
   languages: Language[];
@@ -162,9 +170,10 @@ export const EMPTY_RESUME_DATA: ResumeData = {
   education: [],
   experience: [],
   skills: [],
+  skillsDisplay: "bullets",
   projects: [],
   certifications: [],
-  languages: [],
+  languages: createDefaultLanguages(),
   social: [],
   sectionOrder: DEFAULT_SECTION_ORDER,
 };

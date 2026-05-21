@@ -7,7 +7,7 @@ import type { ContentBlock, MeasuredBlock } from "@/types/pagination";
 import { PAGE_CONTENT_WIDTH_PX } from "@/constants/a4";
 import { resumeDataToBlocks } from "@/utils/resume-blocks";
 import { calculatePageBreaks } from "@/utils/calculatePageBreaks";
-import { TemplateStyleProvider } from "./TemplateStyleContext";
+import { TemplateStyleProvider, getTemplateStyles } from "./TemplateStyleContext";
 import { BlockRenderer } from "./BlockRenderer";
 import { ResumePage } from "./ResumePage";
 import { PageContainer } from "./PageContainer";
@@ -73,6 +73,7 @@ export function PaginationEngine({
   }, [measureBlocks]);
 
   const totalPages = pages.length;
+  const pageContentClass = getTemplateStyles(templateId).contentClass;
 
   return (
     <TemplateStyleProvider templateId={templateId}>
@@ -107,23 +108,8 @@ export function PaginationEngine({
               pageNumber={pageIndex + 1}
               totalPages={totalPages}
               showPageNumber={showPageNumbers}
+              contentClassName={pageContentClass}
             >
-              {pageIndex > 0 &&
-                !pageBlocks.some((b) => b.type === "header") && (
-                  <BlockRenderer
-                    block={{
-                      id: "continued-header",
-                      type: "header",
-                      payload: {
-                        personal: resumeData.personal,
-                        social: resumeData.social,
-                      },
-                    }}
-                    theme={theme}
-                    templateId={templateId}
-                    isFirstPage={false}
-                  />
-                )}
               {pageBlocks.map((block) => (
                 <BlockRenderer
                   key={`${pageIndex}-${block.id}`}

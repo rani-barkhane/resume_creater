@@ -44,6 +44,11 @@ const ResumeSchema = new Schema<IResumeDocument>(
       education: { type: Array, default: [] },
       experience: { type: Array, default: [] },
       skills: { type: [String], default: [] },
+      skillsDisplay: {
+        type: String,
+        enum: ["inline", "bullets", "table", "cards"],
+        default: "bullets",
+      },
       projects: { type: Array, default: [] },
       certifications: { type: Array, default: [] },
       languages: { type: Array, default: [] },

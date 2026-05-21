@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { motion } from "framer-motion";
 import {
   Sparkles,
@@ -72,6 +73,8 @@ const testimonials = [
 ];
 
 export default function LandingPage() {
+  const { isAuthenticated, status } = useAuth();
+
   return (
     <main className="pt-16">
       {/* Hero */}
@@ -100,11 +103,19 @@ export default function LandingPage() {
               drag-and-drop sections, and professional PDF export.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Start Building Free <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
+              {status !== "loading" && isAuthenticated ? (
+                <Link href="/dashboard">
+                  <Button size="lg" className="w-full sm:w-auto">
+                    Go to Dashboard <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/signup">
+                  <Button size="lg" className="w-full sm:w-auto">
+                    Start Building Free <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              )}
               <Link href="/#templates">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   View Templates
@@ -202,12 +213,15 @@ export default function LandingPage() {
             <p className="mt-4 text-indigo-100">
               Join thousands building professional resumes with ResumeForge
             </p>
-            <Link href="/signup" className="inline-block mt-8">
+            <Link
+              href={isAuthenticated ? "/dashboard" : "/signup"}
+              className="inline-block mt-8"
+            >
               <Button
                 size="lg"
                 className="bg-white text-indigo-700 hover:bg-indigo-50"
               >
-                Get Started Free
+                {isAuthenticated ? "Open Dashboard" : "Get Started Free"}
               </Button>
             </Link>
           </div>

@@ -37,7 +37,7 @@ function TimelineBlock({
   return (
     <div className="relative pl-5 mb-4">
       <span
-        className="absolute left-0 top-1.5 w-2 h-2 rounded-sm"
+        className="absolute left-0 top-1.5 w-2 h-2 rounded-full"
         style={{ backgroundColor: GOLD }}
       />
       <span
@@ -119,7 +119,7 @@ export function ProfessionalTemplate({
                           className="text-[12.5px] text-slate-700 leading-relaxed flex gap-2"
                         >
                           <span
-                            className="w-1.5 h-1.5 rounded-sm shrink-0 mt-1.5"
+                            className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5"
                             style={{ backgroundColor: gold }}
                           />
                           <span>{b}</span>

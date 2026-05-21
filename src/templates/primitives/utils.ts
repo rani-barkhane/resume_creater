@@ -1,13 +1,6 @@
-import type { Experience, ResumeData, ResumeTheme, SectionKey } from "@/types/resume";
+import type { ResumeData, ResumeTheme, SectionKey } from "@/types/resume";
 
-export function getExperienceBullets(exp: Experience): string[] {
-  if (exp.bullets?.length) return exp.bullets.filter(Boolean);
-  if (!exp.description?.trim()) return [];
-  return exp.description
-    .split(/\n+/)
-    .map((s) => s.replace(/^[-•*]\s*/, "").trim())
-    .filter(Boolean);
-}
+export { getExperienceBullets, getProjectBullets } from "@/lib/bullet-utils";
 
 export function getOrderedSections(data: ResumeData): SectionKey[] {
   return data.sectionOrder?.length

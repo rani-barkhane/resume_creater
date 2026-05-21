@@ -2,12 +2,18 @@
 
 import { Mail, Phone, Link2 } from "lucide-react";
 import type { ContentBlock } from "@/types/pagination";
-import type { ResumeData, ResumeTheme, TemplateId } from "@/types/resume";
+import type {
+  ResumeData,
+  ResumeTheme,
+  SkillsDisplayMode,
+  TemplateId,
+} from "@/types/resume";
 import { useTemplateStyles } from "./TemplateStyleContext";
 import { ExperienceSection } from "./sections/ExperienceSection";
 import { EducationSection } from "./sections/EducationSection";
 import { ProjectsSection } from "./sections/ProjectsSection";
 import { SkillsSection } from "./sections/SkillsSection";
+import { parseSummaryParts } from "./sections/professional-layout";
 
 interface BlockRendererProps {
   block: ContentBlock;
@@ -96,7 +102,10 @@ export function BlockRenderer({
           >
             {personal.fullName || "Your Name"}
           </h1>
-          <p className="text-[15px] italic text-slate-700 mt-0.5">
+          <p
+            className="text-[15px] italic font-serif mt-0.5"
+            style={{ color: theme.primaryColor }}
+          >
             {personal.jobTitle || "Job Title"}
           </p>
           <div
@@ -126,18 +135,24 @@ export function BlockRenderer({
       );
     }
 
-    case "summary":
+    case "summary": {
+      const text = block.payload.text as string;
       return (
         <section
-          className={`mb-4 resume-block-summary ${styles.bodyText}`}
+          className={`mb-5 resume-block-summary ${styles.bodyText}`}
           data-block-id={block.id}
           style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
         >
-          <p className="text-[13px] leading-relaxed text-justify">
-            {block.payload.text as string}
+          <p
+            className={`text-[13px] leading-[1.6] text-justify ${
+              styles.isProfessional ? "font-serif text-slate-700" : ""
+            }`}
+          >
+            {styles.isProfessional ? parseSummaryParts(text) : text}
           </p>
         </section>
       );
+    }
 
     case "section-heading":
       return (
@@ -145,15 +160,15 @@ export function BlockRenderer({
           className={styles.sectionTitleClass}
           style={{
             color: theme.primaryColor,
+            borderColor: styles.isProfessional ? theme.primaryColor : undefined,
             breakAfter: "avoid",
             pageBreakAfter: "avoid",
-            ...(templateId === "professional"
-              ? { fontFamily: "Georgia, serif" }
-              : {}),
           }}
           data-block-id={block.id}
         >
-          {block.payload.title as string}
+          {styles.isProfessional
+            ? (block.payload.title as string).toUpperCase()
+            : (block.payload.title as string)}
         </h2>
       );
 
@@ -170,7 +185,10 @@ export function BlockRenderer({
     case "education":
       return (
         <div data-block-id={block.id}>
-          <EducationSection payload={block.payload as never} />
+          <EducationSection
+            payload={block.payload as never}
+            theme={theme}
+          />
         </div>
       );
 
@@ -189,6 +207,7 @@ export function BlockRenderer({
         <div data-block-id={block.id}>
           <SkillsSection
             skills={block.payload.skills as string[]}
+            display={block.payload.skillsDisplay as SkillsDisplayMode | undefined}
             theme={theme}
           />
         </div>
@@ -198,12 +217,18 @@ export function BlockRenderer({
       return (
         <p
           data-block-id={block.id}
-          className={`text-[12px] mb-1.5 ${styles.bodyText}`}
+          className={`text-[12.5px] mb-2 leading-[1.5] ${styles.bodyText} ${
+            styles.isProfessional ? "font-serif" : ""
+          }`}
           style={{ breakInside: "avoid" }}
         >
-          <span className="font-medium">{block.payload.name as string}</span>
+          <span className="font-semibold text-slate-900">
+            {block.payload.name as string}
+          </span>
           {" — "}
-          {block.payload.issuer as string} ({block.payload.date as string})
+          <span className={styles.isProfessional ? "text-slate-700" : ""}>
+            {block.payload.issuer as string} ({block.payload.date as string})
+          </span>
         </p>
       );
 
@@ -211,7 +236,9 @@ export function BlockRenderer({
       return (
         <p
           data-block-id={block.id}
-          className={`text-[12px] ${styles.bodyText}`}
+          className={`text-[12.5px] leading-[1.55] ${styles.bodyText} ${
+            styles.isProfessional ? "font-serif font-bold text-slate-800" : ""
+          }`}
           style={{ breakInside: "avoid" }}
         >
           {(block.payload.languages as { name: string; proficiency: string }[])

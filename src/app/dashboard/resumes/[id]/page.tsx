@@ -19,6 +19,7 @@ import { useResumeStore } from "@/store/resume-store";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useATS } from "@/hooks/useATS";
 import { FORM_STEPS } from "@/constants/templates";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { toast } from "sonner";
 
 export default function ResumeEditorPage() {
@@ -145,9 +146,9 @@ export default function ResumeEditorPage() {
   const step = FORM_STEPS[currentStep];
 
   return (
-    <div className="flex flex-col h-[calc(100vh)] no-print">
+    <div className="flex flex-col h-[calc(100vh)]">
       {/* Toolbar */}
-      <header className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 shrink-0">
+      <header className="no-print h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="sm" onClick={() => router.push("/dashboard")}>
             <ChevronLeft className="w-4 h-4" />
@@ -164,6 +165,7 @@ export default function ResumeEditorPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle variant="icon" />
           <Button variant="ghost" size="sm" onClick={exportJson}>
             JSON
           </Button>
@@ -181,7 +183,7 @@ export default function ResumeEditorPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Form panel */}
-        <div className="editor-form-panel w-full lg:w-[45%] xl:w-[40%] flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden">
+        <div className="editor-form-panel no-print w-full lg:w-[45%] xl:w-[40%] flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden">
           {/* Stepper */}
           <div className="flex items-center gap-1 p-3 overflow-x-auto border-b border-slate-100 dark:border-slate-800 shrink-0">
             {FORM_STEPS.map((s, i) => (

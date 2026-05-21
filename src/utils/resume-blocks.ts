@@ -1,7 +1,10 @@
-import { nanoid } from "nanoid";
 import type { ResumeData, SectionKey } from "@/types/resume";
+import { DEFAULT_SKILLS_DISPLAY } from "@/constants/skills-display";
 import type { ContentBlock } from "@/types/pagination";
-import { getExperienceBullets } from "@/templates/primitives/utils";
+import {
+  getExperienceBullets,
+  getProjectBullets,
+} from "@/lib/bullet-utils";
 
 const SECTION_LABELS: Record<SectionKey, string> = {
   personal: "Personal",
@@ -35,7 +38,7 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
       case "summary":
         if (data.summary?.trim()) {
           blocks.push({
-            id: `summary-${nanoid(4)}`,
+            id: "summary",
             type: "summary",
             section: "summary",
             keepTogether: true,
@@ -46,9 +49,8 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
 
       case "experience":
         if (data.experience.length) {
-          const headingId = `h-exp-${nanoid(4)}`;
           blocks.push({
-            id: headingId,
+            id: "h-experience",
             type: "section-heading",
             section: "experience",
             keepWithNext: true,
@@ -72,7 +74,7 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
       case "education":
         if (data.education.length) {
           blocks.push({
-            id: `h-edu-${nanoid(4)}`,
+            id: "h-education",
             type: "section-heading",
             section: "education",
             keepWithNext: true,
@@ -93,18 +95,21 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
       case "skills":
         if (data.skills.length) {
           blocks.push({
-            id: `h-skills-${nanoid(4)}`,
+            id: "h-skills",
             type: "section-heading",
             section: "skills",
             keepWithNext: true,
             payload: { title: SECTION_LABELS.skills },
           });
           blocks.push({
-            id: `skills-${nanoid(4)}`,
+            id: "skills-block",
             type: "skills",
             section: "skills",
             keepTogether: true,
-            payload: { skills: data.skills },
+            payload: {
+              skills: data.skills,
+              skillsDisplay: data.skillsDisplay ?? DEFAULT_SKILLS_DISPLAY,
+            },
           });
         }
         break;
@@ -112,7 +117,7 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
       case "projects":
         if (data.projects.length) {
           blocks.push({
-            id: `h-proj-${nanoid(4)}`,
+            id: "h-projects",
             type: "section-heading",
             section: "projects",
             keepWithNext: true,
@@ -124,7 +129,10 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
               type: "project",
               section: "projects",
               keepTogether: true,
-              payload: { ...proj },
+              payload: {
+                ...proj,
+                bullets: getProjectBullets(proj),
+              },
             });
           });
         }
@@ -133,7 +141,7 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
       case "certifications":
         if (data.certifications.length) {
           blocks.push({
-            id: `h-cert-${nanoid(4)}`,
+            id: "h-certifications",
             type: "section-heading",
             section: "certifications",
             keepWithNext: true,
@@ -151,29 +159,31 @@ export function resumeDataToBlocks(data: ResumeData): ContentBlock[] {
         }
         break;
 
-      case "languages":
-        if (data.languages.length) {
+      case "languages": {
+        const filledLanguages = data.languages.filter((l) => l.name.trim());
+        if (filledLanguages.length) {
           blocks.push({
-            id: `h-lang-${nanoid(4)}`,
+            id: "h-languages",
             type: "section-heading",
             section: "languages",
             keepWithNext: true,
             payload: { title: SECTION_LABELS.languages },
           });
           blocks.push({
-            id: `lang-${nanoid(4)}`,
+            id: "languages-block",
             type: "languages",
             section: "languages",
             keepTogether: true,
-            payload: { languages: data.languages },
+            payload: { languages: filledLanguages },
           });
         }
         break;
+      }
 
       case "social":
         if (data.social.length) {
           blocks.push({
-            id: `social-${nanoid(4)}`,
+            id: "social-block",
             type: "social",
             section: "social",
             keepTogether: true,
