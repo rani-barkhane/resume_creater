@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ResumeRenderer } from "@/templates/ResumeRenderer";
+import { TemplateRenderer } from "@/templates/TemplateRenderer";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { Resume } from "@/types/resume";
 import { FileText } from "lucide-react";
@@ -81,9 +81,9 @@ export default function PublicResumePage() {
   return (
     <main className="min-h-screen bg-slate-100 dark:bg-slate-900 py-12 flex justify-center px-4">
       <div className="shadow-2xl">
-        <ResumeRenderer
+        <TemplateRenderer
           templateId={resume.templateId}
-          data={resume.data}
+          resumeData={resume.data}
           theme={resume.theme}
         />
       </div>

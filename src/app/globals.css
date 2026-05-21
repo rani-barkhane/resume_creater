@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Match next-themes class="dark" on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #fafafa;
   --foreground: #0f172a;
@@ -26,6 +29,22 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Editor / dashboard form readable text in dark mode */
+.dark .editor-form-panel {
+  color: #f1f5f9;
+}
+
+.dark .editor-form-panel input,
+.dark .editor-form-panel textarea,
+.dark .editor-form-panel select {
+  color: #f8fafc;
+}
+
+.dark .editor-form-panel input::placeholder,
+.dark .editor-form-panel textarea::placeholder {
+  color: #94a3b8;
 }
 
 /* Resume print */

@@ -1,6 +1,6 @@
 "use client";
 
-import { ResumeRenderer } from "@/templates/ResumeRenderer";
+import { TemplateThumbnailPreview } from "@/components/TemplateCards/TemplateThumbnailPreview";
 import type { Resume } from "@/types/resume";
 import { cn } from "@/lib/utils";
 
@@ -14,19 +14,18 @@ export function ResumeThumbnail({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white aspect-[210/297]",
+        "relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 aspect-[210/297]",
         className
       )}
     >
-      <div className="absolute inset-0 origin-top-left scale-[0.22] w-[210mm] pointer-events-none">
-        <ResumeRenderer
-          templateId={resume.templateId}
-          data={resume.data}
-          theme={resume.theme}
-          scale={100}
-        />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent dark:from-slate-950/60 pointer-events-none" />
+      <TemplateThumbnailPreview
+        templateId={resume.templateId}
+        resumeData={resume.data}
+        theme={resume.theme}
+        height={280}
+        className="h-full min-h-[200px]"
+      />
+      <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/90 to-transparent dark:from-slate-950/90 pointer-events-none" />
     </div>
   );
 }

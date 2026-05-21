@@ -2,7 +2,8 @@ export type TemplateId =
   | "minimal"
   | "developer"
   | "corporate"
-  | "creative";
+  | "creative"
+  | "professional";
 
 export type SectionKey =
   | "personal"
@@ -43,6 +44,9 @@ export interface Experience {
   endDate: string;
   current: boolean;
   description: string;
+  /** Optional structured bullets; falls back to splitting description by newlines */
+  bullets?: string[];
+  techStack?: string;
 }
 
 export interface Project {

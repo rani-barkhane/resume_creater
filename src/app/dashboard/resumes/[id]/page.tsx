@@ -6,24 +6,20 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
-  ZoomIn,
-  ZoomOut,
   Save,
   Share2,
-  LayoutTemplate,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { ResumeRenderer } from "@/templates/ResumeRenderer";
-import { ResumeFormSections } from "@/components/resume/ResumeFormSections";
+import { ResumeFormSections } from "@/components/ResumeForm";
+import { ThemeCustomizer, SectionOrderDnd } from "@/components/ResumeForm";
+import { ResumePreview } from "@/components/ResumePreview/ResumePreview";
+import { TemplateSwitcher } from "@/components/ResumePreview/TemplateSwitcher";
 import { ATSScoreMeter } from "@/components/resume/ATSScoreMeter";
-import { ThemeCustomizer } from "@/components/resume/ThemeCustomizer";
-import { SectionOrderDnd } from "@/components/resume/SectionOrderDnd";
 import { useResumeStore } from "@/store/resume-store";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useATS } from "@/hooks/useATS";
-import { FORM_STEPS, TEMPLATES } from "@/constants/templates";
+import { FORM_STEPS } from "@/constants/templates";
 import { toast } from "sonner";
-import type { TemplateId } from "@/types/resume";
 
 export default function ResumeEditorPage() {
   const params = useParams();
@@ -35,15 +31,12 @@ export default function ResumeEditorPage() {
     templateId,
     data,
     theme,
-    previewZoom,
     currentStep,
     isDirty,
     isSaving,
     loadResume,
     setTitle,
-    setTemplateId,
     setCurrentStep,
-    setPreviewZoom,
     setIsSaving,
     markClean,
   } = useResumeStore();
@@ -162,7 +155,7 @@ export default function ResumeEditorPage() {
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="font-semibold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-indigo-500/30 rounded-lg px-2 py-1 text-sm max-w-[200px] sm:max-w-xs truncate"
+            className="font-semibold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-indigo-500/30 rounded-lg px-2 py-1 text-sm text-slate-900 dark:text-slate-100 max-w-[200px] sm:max-w-xs truncate"
           />
           {isDirty && (
             <span className="text-xs text-amber-600">
@@ -188,7 +181,7 @@ export default function ResumeEditorPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Form panel */}
-        <div className="w-full lg:w-[45%] xl:w-[40%] flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden">
+        <div className="editor-form-panel w-full lg:w-[45%] xl:w-[40%] flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden">
           {/* Stepper */}
           <div className="flex items-center gap-1 p-3 overflow-x-auto border-b border-slate-100 dark:border-slate-800 shrink-0">
             {FORM_STEPS.map((s, i) => (
@@ -198,7 +191,7 @@ export default function ResumeEditorPage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                   currentStep === i
                     ? "bg-indigo-600 text-white"
-                    : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
                 {s.label}
@@ -208,7 +201,9 @@ export default function ResumeEditorPage() {
 
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold">{step?.label}</h2>
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+                {step?.label}
+              </h2>
               <div className="flex gap-2">
                 <Button
                   variant="ghost"
@@ -233,24 +228,7 @@ export default function ResumeEditorPage() {
 
             {currentStep === 0 && (
               <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <p className="text-xs font-medium text-slate-500 flex items-center gap-1">
-                  <LayoutTemplate className="w-3 h-3" /> Template
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {TEMPLATES.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setTemplateId(t.id as TemplateId)}
-                      className={`p-3 rounded-xl border text-left text-xs ${
-                        templateId === t.id
-                          ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30"
-                          : "border-slate-200 dark:border-slate-700"
-                      }`}
-                    >
-                      {t.name}
-                    </button>
-                  ))}
-                </div>
+                <TemplateSwitcher />
                 <ThemeCustomizer />
                 <SectionOrderDnd />
               </div>
@@ -260,38 +238,7 @@ export default function ResumeEditorPage() {
           </div>
         </div>
 
-        {/* Preview panel */}
-        <div className="hidden lg:flex flex-1 flex-col bg-slate-100 dark:bg-slate-900/50 overflow-hidden">
-          <div className="flex items-center justify-center gap-2 p-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setPreviewZoom(Math.max(50, previewZoom - 10))}
-            >
-              <ZoomOut className="w-4 h-4" />
-            </Button>
-            <span className="text-xs text-slate-500 w-12 text-center">
-              {previewZoom}%
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setPreviewZoom(Math.min(150, previewZoom + 10))}
-            >
-              <ZoomIn className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="flex-1 overflow-auto p-8 flex justify-center">
-            <div className="shadow-2xl rounded-sm">
-              <ResumeRenderer
-                templateId={templateId}
-                data={data}
-                theme={theme}
-                scale={previewZoom}
-              />
-            </div>
-          </div>
-        </div>
+        <ResumePreview className="hidden lg:flex flex-1" />
       </div>
     </div>
   );

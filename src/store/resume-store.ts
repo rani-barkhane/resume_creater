@@ -11,6 +11,7 @@ import {
   DEFAULT_THEME,
   DEFAULT_SECTION_ORDER,
 } from "@/types/resume";
+import { getDefaultThemeForTemplate } from "@/templates/registry";
 
 interface ResumeEditorState {
   resumeId: string | null;
@@ -50,7 +51,7 @@ const initialState = {
   resumeId: null,
   title: "Untitled Resume",
   slug: "",
-  templateId: "minimal" as TemplateId,
+  templateId: "professional" as TemplateId,
   data: { ...EMPTY_RESUME_DATA, sectionOrder: [...DEFAULT_SECTION_ORDER] },
   theme: { ...DEFAULT_THEME },
   isDirty: false,
@@ -66,7 +67,12 @@ export const useResumeStore = create<ResumeEditorState>()(
       setResumeId: (id) => set({ resumeId: id }),
       setTitle: (title) => set({ title, isDirty: true }),
       setSlug: (slug) => set({ slug, isDirty: true }),
-      setTemplateId: (templateId) => set({ templateId, isDirty: true }),
+      setTemplateId: (templateId) =>
+        set({
+          templateId,
+          theme: getDefaultThemeForTemplate(templateId),
+          isDirty: true,
+        }),
       setData: (partial) =>
         set((s) => ({
           data: { ...s.data, ...partial },

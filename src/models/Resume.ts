@@ -28,7 +28,7 @@ const ResumeSchema = new Schema<IResumeDocument>(
     slug: { type: String, required: true, trim: true },
     templateId: {
       type: String,
-      enum: ["minimal", "developer", "corporate", "creative"],
+      enum: ["minimal", "developer", "corporate", "creative", "professional"],
       default: "minimal",
     },
     data: {

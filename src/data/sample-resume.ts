@@ -2,127 +2,131 @@ import { nanoid } from "nanoid";
 import type { ResumeData } from "@/types/resume";
 import { DEFAULT_SECTION_ORDER } from "@/types/resume";
 
+/** Dummy data modeled after the Professional Gold template example */
 export const SAMPLE_RESUME_DATA: ResumeData = {
   personal: {
-    fullName: "Rani Sharma",
+    fullName: "Rani Barkhane",
     jobTitle: "Full Stack Developer",
-    email: "rani.sharma@email.com",
-    phone: "+1 (555) 234-5678",
-    location: "San Francisco, CA",
-    website: "https://ranisharma.dev",
+    email: "rani.barkhane@email.com",
+    phone: "+91 98765 43210",
+    location: "India",
+    website: "https://linkedin.com/in/rani-barkhane",
   },
   summary:
-    "Results-driven Full Stack Developer with 5+ years building scalable web applications using React, Node.js, and cloud technologies. Passionate about clean code, performance optimization, and delivering exceptional user experiences. Proven track record of leading cross-functional teams and shipping products used by 100K+ users.",
+    "Motivated **Full Stack Developer** with 2+ years of experience building scalable web applications. Skilled in React, Node.js, and cloud deployment. Strong problem-solver with a track record of delivering user-centric products in agile environments.",
   education: [
     {
       id: nanoid(),
-      institution: "University of California, Berkeley",
-      degree: "B.S. Computer Science",
-      field: "Software Engineering",
-      startDate: "2015",
-      endDate: "2019",
-      description: "GPA 3.8/4.0 · Dean's List",
+      institution: "Savitribai Phule Pune University",
+      degree: "Bachelor of Engineering — Computer Science",
+      field: "Computer Engineering",
+      startDate: "2018",
+      endDate: "2022",
+      description: "CGPA: 8.2/10",
     },
   ],
   experience: [
     {
       id: nanoid(),
-      company: "TechFlow Inc.",
-      position: "Senior Full Stack Developer",
-      location: "San Francisco, CA",
-      startDate: "2022",
+      company: "Logikview Analytics",
+      position: "Patient Registry System",
+      location: "Remote",
+      startDate: "July 2023",
       endDate: "Present",
       current: true,
-      description:
-        "Developed responsive frontend interfaces using React and Tailwind CSS, improving user experience and performance by 40%. Architected RESTful APIs with Node.js serving 50K+ daily requests. Led migration to microservices, reducing deployment time by 60%. Mentored 3 junior developers on best practices and code reviews.",
+      techStack:
+        "Node.js, Strapi, SQL, React.js, Redux, REST APIs, JWT Authentication",
+      description: "",
+      bullets: [
+        "Developed and maintained a full-stack patient registry platform serving healthcare providers with secure data management.",
+        "Built RESTful APIs with Node.js and Strapi, integrating SQL databases for reliable patient record storage.",
+        "Implemented React.js frontend with Redux state management, improving form completion rates by 35%.",
+        "Designed JWT-based authentication and role-based access control for HIPAA-aligned workflows.",
+      ],
     },
     {
       id: nanoid(),
-      company: "StartupLabs",
-      position: "Full Stack Developer",
+      company: "Logikview Analytics",
+      position: "Bail Management System (BMS)",
       location: "Remote",
-      startDate: "2019",
-      endDate: "2022",
-      current: false,
-      description:
-        "Built MERN stack applications from scratch for 5+ client projects. Implemented CI/CD pipelines with GitHub Actions. Optimized database queries reducing page load by 35%. Collaborated with designers using Figma for pixel-perfect implementations.",
+      startDate: "Jan 2024",
+      endDate: "Present",
+      current: true,
+      techStack: "React.js, Node.js, MongoDB, Express, Tailwind CSS",
+      description: "",
+      bullets: [
+        "Engineered a bail management dashboard streamlining case tracking and document workflows for legal teams.",
+        "Optimized MongoDB queries and API response times, reducing average load time by 40%.",
+        "Collaborated with cross-functional stakeholders to deliver features on two-week sprint cycles.",
+      ],
     },
   ],
   skills: [
     "JavaScript",
     "TypeScript",
-    "React",
+    "React.js",
     "Next.js",
     "Node.js",
+    "Express.js",
     "MongoDB",
-    "PostgreSQL",
-    "AWS",
-    "Docker",
-    "GraphQL",
-    "Tailwind CSS",
+    "SQL",
+    "REST APIs",
     "Git",
+    "Tailwind CSS",
+    "Strapi",
   ],
   projects: [
     {
       id: nanoid(),
       name: "ResumeForge",
-      url: "https://github.com/rani/resumeforge",
+      url: "https://github.com/rani-barkhane/resume_creater",
       description:
-        "AI-powered resume builder with live preview, ATS scoring, and PDF export. 2K+ GitHub stars.",
-      technologies: ["Next.js", "MongoDB", "OpenAI", "Puppeteer"],
-    },
-    {
-      id: nanoid(),
-      name: "TaskFlow Pro",
-      url: "https://taskflow.app",
-      description:
-        "Real-time collaboration tool for remote teams with WebSocket sync and offline support.",
-      technologies: ["React", "Socket.io", "Redis"],
+        "AI-powered resume builder with live preview, ATS scoring, template switching, and PDF export.",
+      technologies: ["Next.js", "MongoDB", "OpenAI", "Puppeteer", "Zustand"],
     },
   ],
   certifications: [
     {
       id: nanoid(),
-      name: "AWS Solutions Architect Associate",
-      issuer: "Amazon Web Services",
-      date: "2023",
-    },
-    {
-      id: nanoid(),
       name: "Meta Front-End Developer",
-      issuer: "Meta",
-      date: "2022",
+      issuer: "Meta / Coursera",
+      date: "2023",
     },
   ],
   languages: [
-    { id: nanoid(), name: "English", proficiency: "Native" },
-    { id: nanoid(), name: "Hindi", proficiency: "Fluent" },
+    { id: nanoid(), name: "English", proficiency: "Professional" },
+    { id: nanoid(), name: "Hindi", proficiency: "Native" },
+    { id: nanoid(), name: "Marathi", proficiency: "Native" },
   ],
   social: [
     {
       id: nanoid(),
       platform: "LinkedIn",
-      url: "https://linkedin.com/in/ranisharma",
+      url: "https://linkedin.com/in/rani-barkhane",
     },
-    { id: nanoid(), platform: "GitHub", url: "https://github.com/rani" },
+    {
+      id: nanoid(),
+      platform: "GitHub",
+      url: "https://github.com/rani-barkhane",
+    },
   ],
   sectionOrder: DEFAULT_SECTION_ORDER,
 };
 
 export const SAMPLE_RESUMES_META = [
   {
-    title: "Frontend Developer Resume",
-    templateId: "developer" as const,
-    slug: "rani-frontend-developer",
+    title: "Professional Resume",
+    templateId: "professional" as const,
+    slug: "rani-barkhane-developer",
   },
   {
-    title: "Full Stack Resume",
+    title: "ATS Minimal Resume",
     templateId: "minimal" as const,
-    slug: "rani-mern-developer",
+    slug: "rani-ats-minimal",
   },
   {
-    title: "Corporate PM Resume",
-    templateId: "corporate" as const,
-    slug: "rani-corporate-pm",
+    title: "Developer Resume",
+    templateId: "developer" as const,
+    slug: "rani-developer-dark",
   },
 ];

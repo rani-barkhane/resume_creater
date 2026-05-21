@@ -46,7 +46,7 @@ function SortableItem({ id }: { id: SectionKey }) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm"
+      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-sm text-slate-800 dark:text-slate-200"
     >
       <button
         {...attributes}
@@ -86,7 +86,9 @@ export function SectionOrderDnd() {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-slate-500">Drag to reorder sections</p>
+      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+        Drag to reorder sections
+      </p>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

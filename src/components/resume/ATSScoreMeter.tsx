@@ -7,7 +7,7 @@ import type { ATSResult } from "@/types/resume";
 export function ATSScoreMeter({ result }: { result: ATSResult | null }) {
   if (!result) {
     return (
-      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-sm text-slate-500">
+      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm text-slate-600 dark:text-slate-300">
         Fill in your resume to see ATS score
       </div>
     );
@@ -15,10 +15,10 @@ export function ATSScoreMeter({ result }: { result: ATSResult | null }) {
 
   const color =
     result.score >= 80
-      ? "text-emerald-600"
+      ? "text-emerald-600 dark:text-emerald-400"
       : result.score >= 60
-        ? "text-amber-600"
-        : "text-red-600";
+        ? "text-amber-600 dark:text-amber-400"
+        : "text-red-600 dark:text-red-400";
 
   const barColor =
     result.score >= 80
@@ -28,11 +28,13 @@ export function ATSScoreMeter({ result }: { result: ATSResult | null }) {
         : "bg-red-500";
 
   return (
-    <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
+    <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-indigo-600" />
-          <span className="font-semibold text-sm">ATS Score</span>
+          <TrendingUp className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+            ATS Score
+          </span>
         </div>
         <motion.span
           key={result.score}
@@ -61,20 +63,22 @@ export function ATSScoreMeter({ result }: { result: ATSResult | null }) {
         ].map((m) => (
           <div
             key={m.label}
-            className="p-2 rounded-lg bg-slate-50 dark:bg-slate-900 text-xs"
+            className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-xs"
           >
-            <p className="font-semibold">{m.value}%</p>
-            <p className="text-slate-500">{m.label}</p>
+            <p className="font-semibold text-slate-900 dark:text-slate-100">
+              {m.value}%
+            </p>
+            <p className="text-slate-600 dark:text-slate-400">{m.label}</p>
           </div>
         ))}
       </div>
 
       {result.missingSections.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-red-600 flex items-center gap-1">
+          <p className="text-xs font-medium text-red-600 dark:text-red-400 flex items-center gap-1">
             <AlertCircle className="w-3 h-3" /> Missing
           </p>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
+          <p className="text-xs text-slate-700 dark:text-slate-300">
             {result.missingSections.join(", ")}
           </p>
         </div>
@@ -82,7 +86,7 @@ export function ATSScoreMeter({ result }: { result: ATSResult | null }) {
 
       {result.missingKeywords.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-amber-600 mb-1">
+          <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
             Suggested keywords
           </p>
           <div className="flex flex-wrap gap-1">
@@ -102,7 +106,7 @@ export function ATSScoreMeter({ result }: { result: ATSResult | null }) {
         {result.suggestions.slice(0, 3).map((s, i) => (
           <li
             key={i}
-            className="text-xs text-slate-600 dark:text-slate-400 flex gap-1.5"
+            className="text-xs text-slate-700 dark:text-slate-300 flex gap-1.5"
           >
             <CheckCircle2 className="w-3 h-3 text-indigo-500 shrink-0 mt-0.5" />
             {s}

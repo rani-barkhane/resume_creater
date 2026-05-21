@@ -116,7 +116,9 @@ export function ResumeFormSections() {
       return (
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-medium">Professional Summary</label>
+            <label className="text-sm font-medium text-slate-800 dark:text-slate-200">
+              Professional Summary
+            </label>
             <Button variant="outline" size="sm" onClick={aiSummary}>
               <Sparkles className="w-3 h-3" /> AI Generate
             </Button>
@@ -125,10 +127,12 @@ export function ResumeFormSections() {
             value={data.summary}
             onChange={(e) => setData({ summary: e.target.value.slice(0, 600) })}
             rows={6}
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm resize-none focus:ring-2 focus:ring-indigo-500/30 focus:outline-none"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none"
             placeholder="Write a compelling professional summary..."
           />
-          <p className="text-xs text-slate-400">{data.summary.length}/600</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {data.summary.length}/600
+          </p>
         </div>
       );
 
@@ -141,7 +145,7 @@ export function ResumeFormSections() {
               className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3"
             >
               <div className="flex justify-between">
-                <span className="text-xs font-medium text-slate-500">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                   Experience {i + 1}
                 </span>
                 <button
@@ -173,6 +177,16 @@ export function ResumeFormSections() {
                   setData({ experience });
                 }}
               />
+              <Input
+                label="Tech Stack (optional)"
+                placeholder="React, Node.js, MongoDB..."
+                value={exp.techStack || ""}
+                onChange={(e) => {
+                  const experience = [...data.experience];
+                  experience[i] = { ...exp, techStack: e.target.value };
+                  setData({ experience });
+                }}
+              />
               <textarea
                 value={exp.description}
                 onChange={(e) => {
@@ -184,7 +198,7 @@ export function ResumeFormSections() {
                   setData({ experience });
                 }}
                 rows={4}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="Describe your achievements..."
               />
               <Button
@@ -379,7 +393,7 @@ export function ResumeFormSections() {
                   setData({ projects });
                 }}
                 rows={3}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
               <Input
                 label="Technologies (comma-separated)"

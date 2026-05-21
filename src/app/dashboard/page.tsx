@@ -84,7 +84,10 @@ export default function DashboardPage() {
             Create, edit, and manage your resume versions
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/dashboard/templates">
+            <Button variant="outline">Browse Templates</Button>
+          </Link>
           <Button variant="outline" onClick={() => createResume(true)}>
             Sample Data
           </Button>

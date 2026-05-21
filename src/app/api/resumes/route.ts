@@ -4,8 +4,10 @@ import { connectDB } from "@/lib/mongodb";
 import { ResumeModel } from "@/models/Resume";
 import { getAuthFromRequest } from "@/lib/auth";
 import { jsonOk, jsonError, serializeDoc } from "@/lib/api-utils";
-import { EMPTY_RESUME_DATA, DEFAULT_THEME } from "@/types/resume";
+import { EMPTY_RESUME_DATA } from "@/types/resume";
 import { SAMPLE_RESUME_DATA } from "@/data/sample-resume";
+import { getDefaultThemeForTemplate } from "@/templates/registry";
+import type { TemplateId } from "@/types/resume";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -44,7 +46,8 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const title = body.title || "Untitled Resume";
   const useSample = body.useSample === true;
-  const templateId = body.templateId || "minimal";
+  const templateId = (body.templateId || "professional") as TemplateId;
+  const theme = getDefaultThemeForTemplate(templateId);
 
   const baseSlug = slugify(title, { lower: true, strict: true }) || "resume";
   const slug = `${baseSlug}-${nanoid(6)}`;
@@ -56,7 +59,7 @@ export async function POST(req: NextRequest) {
     slug,
     templateId,
     data: useSample ? SAMPLE_RESUME_DATA : EMPTY_RESUME_DATA,
-    theme: DEFAULT_THEME,
+    theme,
   });
 
   return jsonOk({ resume: serializeDoc(resume) }, 201);

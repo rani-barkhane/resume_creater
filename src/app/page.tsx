@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { TEMPLATES } from "@/constants/templates";
+import { LandingTemplateShowcase } from "@/components/TemplateCards/LandingTemplateShowcase";
 
 const features = [
   {
@@ -159,26 +159,10 @@ export default function LandingPage() {
           <h2 className="text-3xl font-bold text-center mb-12">
             Beautiful ATS-friendly templates
           </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TEMPLATES.map((t) => (
-              <Card key={t.id} hover className="overflow-hidden">
-                <div
-                  className={`h-48 bg-gradient-to-br ${t.previewGradient} flex items-end p-4`}
-                >
-                  <div className="w-full h-32 bg-white/90 dark:bg-slate-900/90 rounded-lg shadow-sm p-3 space-y-1">
-                    <div className="h-2 w-2/3 bg-slate-300 rounded" />
-                    <div className="h-1.5 w-1/2 bg-slate-200 rounded" />
-                    <div className="h-1 w-full bg-slate-100 rounded mt-2" />
-                    <div className="h-1 w-4/5 bg-slate-100 rounded" />
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold">{t.name}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{t.description}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <LandingTemplateShowcase />
+          <p className="text-center text-sm text-slate-500 mt-8">
+            Click any template to sign up and start building — switch designs anytime without re-entering data.
+          </p>
         </div>
       </section>
 
